@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es-UY">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulación mensual - UTE 2026</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div>
+        <h1>Simulación factura mensual</h1>
+        <p class="muted">Elegí tarifa, ingresá datos y calculá el mes</p>
+      </div>
+
+      <nav class="tabs">
+        <a class="tab" href="./index.html">Inicio</a>
+        <a class="tab active" href="./mensual.html">Mensual</a>
+        <a class="tab" href="./anual.html">Anual</a>
+      </nav>
+    </header>
+
+    <div id="warnBox" class="warn" style="display:none;"></div>
+
+    <section class="card">
+      <div class="row">
+        <div>
+          <label>Tarifa</label>
+          <select id="tarifaSelect"></select>
+        </div>
+
+        <div>
+          <label>Potencia contratada (kW)</label>
+          <input id="kwInput" type="number" min="0" step="0.1" value="0" />
+        </div>
+      </div>
+
+      <div id="energyInputs" class="block"></div>
+
+      <div class="actions">
+        <button id="calcBtn" class="btn">Calcular</button>
+      </div>
+
+      <section id="resultCard" class="result" style="display:none;">
+        <h2>Resultado</h2>
+
+        <div class="tableWrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Concepto</th>
+                <th class="right">Importe</th>
+              </tr>
+            </thead>
+            <tbody id="detalleBody"></tbody>
+          </table>
+        </div>
+
+        <div class="totalRow">
+          <div><b>TOTAL</b></div>
+          <div><b id="totalOut">$ 0,00</b></div>
+        </div>
+
+        <p id="notaTarifa" class="muted small"></p>
+      </section>
+    </section>
+  </div>
+
+  <!-- TU app.js mensual (sin tocar) -->
+  <script src="./app.js?v=mensual-1"></script>
+</body>
+</html>
