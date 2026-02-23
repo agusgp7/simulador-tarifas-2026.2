@@ -1,0 +1,325 @@
+{
+  "tarifas": [
+    {
+      "id": "TRS",
+      "nombre": "Tarifa Residencial Simple (TRS) (<= 40 kW, 230/400V)",
+      "cargoFijo": 324.9,
+      "potencia": { "precioPorkW": 83.2 },
+      "energia": {
+        "tipo": "escalones",
+        "escalones": [
+          { "hastaIncluye": 100, "precioPorKWh": 6.744 },
+          { "hastaIncluye": 600, "precioPorKWh": 8.452 },
+          { "hastaIncluye": null, "precioPorKWh": 10.539 }
+        ]
+      },
+      "reactiva": { "modelo": "grupo1_k1", "defaultCalcula": false },
+      "iva": {
+        "tasa": 0.22,
+        "aplica": { "cargoFijo": false, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true }
+      },
+      "ui": { "tituloCargoFijo": "CARGO FIJO", "labelCargoFijo": "Cargo fijo mensual" },
+      "notas": "Grupo 1: reactiva opcional (UTE puede cobrar o no)."
+    },
+    {
+      "id": "TGS",
+      "nombre": "Tarifa General Simple (TGS) (<= 40 kW)",
+      "cargoFijo": 272.8,
+      "potencia": { "precioPorkW": 70.0 },
+      "energia": {
+        "tipo": "escalones",
+        "escalones": [
+          { "hastaIncluye": 1000, "precioPorKWh": 5.64 },
+          { "hastaIncluye": null, "precioPorKWh": 6.473 }
+        ]
+      },
+      "reactiva": { "modelo": "grupo1_k1", "defaultCalcula": false },
+      "iva": {
+        "tasa": 0.22,
+        "aplica": { "cargoFijo": true, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true }
+      },
+      "ui": { "tituloCargoFijo": "CARGO FIJO", "labelCargoFijo": "Cargo fijo mensual" },
+      "notas": "Todos los conceptos llevan IVA."
+    },
+    {
+      "id": "TCB",
+      "nombre": "Tarifa de Consumo Básico (TCB) (<= 3,7 kW)",
+      "cargoFijo": 633.9,
+      "energia": {
+        "tipo": "rangos_absolutos",
+        "rangos": [
+          { "desdeIncluye": 101, "hastaIncluye": 140, "precioPorKWh": 8.512 },
+          { "desdeIncluye": 141, "hastaIncluye": 350, "precioPorKWh": 12.853 },
+          { "desdeIncluye": 351, "hastaIncluye": null, "precioPorKWh": 10.539 }
+        ]
+      },
+      "iva": {
+        "tasa": 0.22,
+        "aplica": { "cargoFijo": false, "potencia": false, "energia": true, "reactiva": true, "excedentaria": true }
+      },
+      "ui": { "tituloCargoFijo": "CARGO MENSUAL", "labelCargoFijo": "Cargo mensual" },
+      "notas": "Incluye hasta 100 kWh/mes dentro del cargo mensual. Cargo mensual NO grava IVA."
+    },
+    {
+      "id": "TRD",
+      "nombre": "Tarifa Doble Horario Residencial (TRD) (3,5 a 40 kW)",
+      "cargoFijo": 488.0,
+      "potencia": { "precioPorkW": 83.2 },
+      "energia": {
+        "tipo": "doble_horario",
+        "punta": { "precioPorKWh": 12.034 },
+        "fueraPunta": { "precioPorKWh": 4.771 }
+      },
+      "reactiva": { "modelo": "grupo2_trd", "defaultCalcula": false },
+      "iva": {
+        "tasa": 0.22,
+        "aplica": { "cargoFijo": false, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true }
+      },
+      "ui": { "tituloCargoFijo": "CARGO FIJO", "labelCargoFijo": "Cargo fijo mensual" },
+      "notas": "Grupo 2: reactiva se aplica sobre $ de energía Punta (sin IVA). Puede bonificar o penalizar."
+    },
+    {
+      "id": "TRT",
+      "nombre": "Tarifa Triple Horario Residencial (TRT) (3,5 a 40 kW)",
+      "cargoFijo": 488.0,
+      "potencia": { "precioPorkW": 83.2 },
+      "energia": {
+        "tipo": "triple_horario",
+        "valle": { "precioPorKWh": 2.443 },
+        "llano": { "precioPorKWh": 5.172 },
+        "punta": { "precioPorKWh": 12.034 }
+      },
+      "reactiva": { "modelo": "grupo3", "A": 23, "always": false, "includePotenciaReactiva": false, "defaultCalcula": false },
+      "iva": {
+        "tasa": 0.22,
+        "aplica": { "cargoFijo": false, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true }
+      },
+      "ui": { "tituloCargoFijo": "CARGO FIJO", "labelCargoFijo": "Cargo fijo mensual" },
+      "notas": "Grupo 3 opcional (con botón)."
+    },
+
+    {
+      "id": "MC1",
+      "nombre": "Mediano Consumidor 1 (MC1) - 230/400V",
+      "cargoFijo": 574.8,
+      "potencia": {
+        "tipo": "mc_potencia_tramos",
+        "puntaLlano": { "precioPorkW": 394.4 },
+        "valle": { "precioPorkW": 20.9 },
+        "minimoFactor": 0.5,
+        "excedentaria": { "umbralFactor": 1.3, "factorEscalon1": 1.0, "factorEscalon2": 3.0 }
+      },
+      "energia": {
+        "tipo": "triple_horario",
+        "punta": { "precioPorKWh": 13.182 },
+        "llano": { "precioPorKWh": 5.794 },
+        "valle": { "precioPorKWh": 2.632 }
+      },
+      "reactiva": { "modelo": "grupo3", "A": 23, "always": true, "includePotenciaReactiva": true },
+      "iva": {
+        "tasa": 0.22,
+        "aplica": { "cargoFijo": true, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true }
+      },
+      "ui": { "tituloCargoFijo": "CARGO FIJO", "labelCargoFijo": "Cargo fijo mensual" },
+      "notas": "Grupo 3 (A=23)."
+    },
+    {
+      "id": "MC2",
+      "nombre": "Mediano Consumidor 2 (MC2) - 6,4/15/22kV",
+      "cargoFijo": 1306,
+      "potencia": {
+        "tipo": "mc_potencia_3tramos",
+        "punta": { "precioPorkW": 252.6 },
+        "llano": { "precioPorkW": 209.5 },
+        "valle": { "precioPorkW": 39.3 },
+        "minimoFactor": 1.0,
+        "excedentaria": { "umbralFactor": 1.3, "factorEscalon1": 1.0, "factorEscalon2": 3.0 }
+      },
+      "energia": {
+        "tipo": "triple_horario",
+        "punta": { "precioPorKWh": 6.88 },
+        "llano": { "precioPorKWh": 5.377 },
+        "valle": { "precioPorKWh": 2.498 }
+      },
+      "reactiva": { "modelo": "grupo3", "A": 18, "always": true, "includePotenciaReactiva": true },
+      "iva": {
+        "tasa": 0.22,
+        "aplica": { "cargoFijo": true, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true }
+      },
+      "ui": { "tituloCargoFijo": "CARGO FIJO", "labelCargoFijo": "Cargo fijo mensual" }
+    },
+    {
+      "id": "MC3",
+      "nombre": "Mediano Consumidor 3 (MC3) - 31,5kV",
+      "cargoFijo": 1463,
+      "potencia": {
+        "tipo": "mc_potencia_3tramos",
+        "punta": { "precioPorkW": 173.3 },
+        "llano": { "precioPorkW": 127.9 },
+        "valle": { "precioPorkW": 32.9 },
+        "minimoFactor": 1.0,
+        "excedentaria": { "umbralFactor": 1.3, "factorEscalon1": 1.0, "factorEscalon2": 3.0 }
+      },
+      "energia": {
+        "tipo": "triple_horario",
+        "punta": { "precioPorKWh": 6.33 },
+        "llano": { "precioPorKWh": 5.323 },
+        "valle": { "precioPorKWh": 2.492 }
+      },
+      "reactiva": { "modelo": "grupo3", "A": 12, "always": true, "includePotenciaReactiva": true },
+      "iva": {
+        "tasa": 0.22,
+        "aplica": { "cargoFijo": true, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true }
+      },
+      "ui": { "tituloCargoFijo": "CARGO FIJO", "labelCargoFijo": "Cargo fijo mensual" }
+    },
+
+    {
+      "id": "GC1",
+      "nombre": "Gran Consumidor 1 (GC1)",
+      "cargoFijo": 5225,
+      "potencia": {
+        "tipo": "mc_potencia_3tramos",
+        "punta": { "precioPorkW": 737.8 },
+        "llano": { "precioPorkW": 317.6 },
+        "valle": { "precioPorkW": 52.1 },
+        "minimoFactor": 1.0,
+        "excedentaria": { "umbralFactor": 1.3, "factorEscalon1": 1.0, "factorEscalon2": 3.0 }
+      },
+      "energia": {
+        "tipo": "triple_horario",
+        "punta": { "precioPorKWh": 6.824 },
+        "llano": { "precioPorKWh": 4.583 },
+        "valle": { "precioPorKWh": 2.544 }
+      },
+      "reactiva": { "modelo": "grupo3_gc_q1", "A": 23, "always": true, "includePotenciaReactiva": true },
+      "iva": { "tasa": 0.22, "aplica": { "cargoFijo": true, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true } }
+    },
+    {
+      "id": "GC2",
+      "nombre": "Gran Consumidor 2 (GC2)",
+      "cargoFijo": 5539,
+      "potencia": {
+        "tipo": "mc_potencia_3tramos",
+        "punta": { "precioPorkW": 356.2 },
+        "llano": { "precioPorkW": 300.2 },
+        "valle": { "precioPorkW": 60.1 },
+        "minimoFactor": 1.0,
+        "excedentaria": { "umbralFactor": 1.3, "factorEscalon1": 1.0, "factorEscalon2": 3.0 }
+      },
+      "energia": {
+        "tipo": "triple_horario",
+        "punta": { "precioPorKWh": 5.453 },
+        "llano": { "precioPorKWh": 4.441 },
+        "valle": { "precioPorKWh": 2.543 }
+      },
+      "reactiva": { "modelo": "grupo3_gc_q1", "A": 18, "always": true, "includePotenciaReactiva": true },
+      "iva": { "tasa": 0.22, "aplica": { "cargoFijo": true, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true } }
+    },
+    {
+      "id": "GC3",
+      "nombre": "Gran Consumidor 3 (GC3)",
+      "cargoFijo": 10267,
+      "potencia": {
+        "tipo": "mc_potencia_3tramos",
+        "punta": { "precioPorkW": 307.2 },
+        "llano": { "precioPorkW": 186.2 },
+        "valle": { "precioPorkW": 56.8 },
+        "minimoFactor": 1.0,
+        "excedentaria": { "umbralFactor": 1.3, "factorEscalon1": 1.0, "factorEscalon2": 3.0 }
+      },
+      "energia": {
+        "tipo": "triple_horario",
+        "punta": { "precioPorKWh": 5.261 },
+        "llano": { "precioPorKWh": 3.944 },
+        "valle": { "precioPorKWh": 2.4 }
+      },
+      "reactiva": { "modelo": "gc_grupo3_2_pot_only", "always": true, "includePotenciaReactiva": true },
+      "iva": { "tasa": 0.22, "aplica": { "cargoFijo": true, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true } }
+    },
+    {
+      "id": "GC5",
+      "nombre": "Gran Consumidor 5 (GC5)",
+      "cargoFijo": 14630,
+      "potencia": {
+        "tipo": "mc_potencia_3tramos",
+        "punta": { "precioPorkW": 212.8 },
+        "llano": { "precioPorkW": 159.1 },
+        "valle": { "precioPorkW": 53.2 },
+        "minimoFactor": 1.0,
+        "excedentaria": { "umbralFactor": 1.3, "factorEscalon1": 1.0, "factorEscalon2": 3.0 }
+      },
+      "energia": {
+        "tipo": "triple_horario",
+        "punta": { "precioPorKWh": 5.258 },
+        "llano": { "precioPorKWh": 3.942 },
+        "valle": { "precioPorKWh": 2.399 }
+      },
+      "reactiva": { "modelo": "gc_grupo3_2_pot_only", "always": true, "includePotenciaReactiva": true },
+      "iva": { "tasa": 0.22, "aplica": { "cargoFijo": true, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true } }
+    },
+
+    {
+      "id": "TZ1",
+      "nombre": "Tarifa Zafral 1 (TZ1)",
+      "cargoFijo": 574.8,
+      "potencia": {
+        "tipo": "tz_potencia_zafral",
+        "puntaLlano": { "precioPorkW": 945.2 },
+        "minimoFactorZafra": 0.5,
+        "umbralFactorExced": 1.3,
+        "factorExced": 1.0
+      },
+      "energia": {
+        "tipo": "triple_horario",
+        "punta": { "precioPorKWh": 14.186 },
+        "llano": { "precioPorKWh": 4.282 },
+        "valle": { "precioPorKWh": 3.717 }
+      },
+      "reactiva": { "modelo": "grupo3", "A": 23, "always": true, "includePotenciaReactiva": true },
+      "iva": { "tasa": 0.22, "aplica": { "cargoFijo": true, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true } },
+      "ui": { "tituloCargoFijo": "CARGO FIJO", "labelCargoFijo": "Cargo fijo mensual" },
+      "notas": "TZ: se factura potencia SOLO P-LL. Excedentaria SOLO en zafra (Nov–Mar) y solo si supera +30% de contratado."
+    },
+    {
+      "id": "TZ2",
+      "nombre": "Tarifa Zafral 2 (TZ2)",
+      "cargoFijo": 1306,
+      "potencia": {
+        "tipo": "tz_potencia_zafral",
+        "puntaLlano": { "precioPorkW": 618.2 },
+        "minimoFactorZafra": 0.5,
+        "umbralFactorExced": 1.3,
+        "factorExced": 1.0
+      },
+      "energia": {
+        "tipo": "triple_horario",
+        "punta": { "precioPorKWh": 10.915 },
+        "llano": { "precioPorKWh": 4.183 },
+        "valle": { "precioPorKWh": 3.644 }
+      },
+      "reactiva": { "modelo": "grupo3", "A": 18, "always": true, "includePotenciaReactiva": true },
+      "iva": { "tasa": 0.22, "aplica": { "cargoFijo": true, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true } }
+    },
+    {
+      "id": "TZ3",
+      "nombre": "Tarifa Zafral 3 (TZ3)",
+      "cargoFijo": 1463,
+      "potencia": {
+        "tipo": "tz_potencia_zafral",
+        "puntaLlano": { "precioPorkW": 372.7 },
+        "minimoFactorZafra": 0.5,
+        "umbralFactorExced": 1.3,
+        "factorExced": 1.0
+      },
+      "energia": {
+        "tipo": "triple_horario",
+        "punta": { "precioPorKWh": 8.61 },
+        "llano": { "precioPorKWh": 4.178 },
+        "valle": { "precioPorKWh": 3.64 }
+      },
+      "reactiva": { "modelo": "grupo3", "A": 12, "always": true, "includePotenciaReactiva": true },
+      "iva": { "tasa": 0.22, "aplica": { "cargoFijo": true, "potencia": true, "energia": true, "reactiva": true, "excedentaria": true } }
+    }
+  ]
+}
