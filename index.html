@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es-UY">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simuladores UTE 2026</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div>
+        <h1>Simuladores UTE 2026</h1>
+        <p class="muted">Uso interno — elegí el módulo</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="grid">
+        <a class="btnLink" href="./mensual.html">
+          <div class="btnCard">
+            <div class="btnTitle">Simulación factura mensual</div>
+            <div class="btnSub">Calcular una tarifa para un mes</div>
+          </div>
+        </a>
+
+        <a class="btnLink" href="./anual.html">
+          <div class="btnCard">
+            <div class="btnTitle">Comparador anual (12 meses)</div>
+            <div class="btnSub">Ranking de tarifas + ahorro vs base</div>
+          </div>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .btnLink { text-decoration: none; color: inherit; }
+    .btnCard{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      transition: transform .06s ease, filter .06s ease;
+      min-height: 92px;
+    }
+    .btnCard:hover{ transform: translateY(-1px); filter: brightness(1.06); }
+    .btnTitle{ font-weight: 900; font-size: 16px; }
+    .btnSub{ margin-top: 6px; color: #a7b0d6; font-size: 12px; }
+  </style>
+</body>
+</html>
