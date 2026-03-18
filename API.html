@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API 15 min - Pruebas</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --soft: #1f2937;
+      --line: #334155;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #22c55e;
+      --warn: #f59e0b;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #0b1220 0%, #111827 100%);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .sub {
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 420px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      background: #020617;
+      color: #dbeafe;
+      border-radius: 12px;
+      padding: 14px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #0b1220;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .primary { background: var(--accent); color: #052e16; }
+    .secondary { background: #334155; color: white; }
+    .ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .kpi {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .kpi .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .kpi .value {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .hint, .status {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.45;
+    }
+
+    .status.error { color: #fca5a5; }
+    .status.ok { color: #86efac; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #243041;
+      padding: 8px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #0f172a;
+      z-index: 1;
+    }
+
+    .table-wrap {
+      max-height: 540px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #1e293b;
+      border: 1px solid var(--line);
+    }
+
+    @media (max-width: 1000px) {
+      .grid { grid-template-columns: 1fr; }
+      .controls, .kpis { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Pruebas API de consumos cada 15 minutos</h1>
+    <div class="sub">
+      Pegá el JSON completo del endpoint. Por defecto, la página toma el <strong>primer punto como 27/02/2026 00:00</strong>, tal como validaste para tu caso.
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Entrada JSON</h2>
+        <textarea id="jsonInput" spellcheck="false"></textarea>
+
+        <div class="controls">
+          <div class="field">
+            <label for="modoFecha">Modo de interpretación de fecha</label>
+            <select id="modoFecha">
+              <option value="secuencial">Secuencial (primer punto = fecha base)</option>
+              <option value="epoch">Epoch real del timestamp</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fechaBase">Fecha/hora base</label>
+            <input id="fechaBase" type="datetime-local" value="2026-02-27T00:00" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="procesarBtn">Procesar JSON</button>
+          <button class="secondary" id="cargarEjemploBtn">Cargar ejemplo</button>
+          <button class="ghost" id="copiarResumenBtn">Copiar resumen</button>
+        </div>
+
+        <div id="status" class="status">Esperando JSON...</div>
+
+        <div class="hint">
+          La página intenta leer <span class="badge">data_array[0].data</span> con formato <span class="badge">[timestamp, valor]</span>.<br>
+          También calcula <span class="badge">kW = kWh / 0.25</span> y clasifica por franja simple: Valle 00-07, Llano 07-18, Punta 18-23, Valle 23-24.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Resumen</h2>
+        <div class="kpis">
+          <div class="kpi"><div class="label">Registros</div><div class="value" id="kpiRegistros">-</div></div>
+          <div class="kpi"><div class="label">Total kWh</div><div class="value" id="kpiTotal">-</div></div>
+          <div class="kpi"><div class="label">Potencia máxima kW</div><div class="value" id="kpiMaxKw">-</div></div>
+          <div class="kpi"><div class="label">Período</div><div class="value" id="kpiPeriodo" style="font-size:15px; line-height:1.3; font-weight:700;">-</div></div>
+          <div class="kpi"><div class="label">Valle kWh</div><div class="value" id="kpiValle">-</div></div>
+          <div class="kpi"><div class="label">Llano kWh</div><div class="value" id="kpiLlano">-</div></div>
+          <div class="kpi"><div class="label">Punta kWh</div><div class="value" id="kpiPunta">-</div></div>
+          <div class="kpi"><div class="label">Etiqueta detectada</div><div class="value" id="kpiLabel" style="font-size:15px; line-height:1.3; font-weight:700;">-</div></div>
+        </div>
+
+        <h2>Primeros registros procesados</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Timestamp</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>kWh</th>
+                <th>kW</th>
+                <th>Franja</th>
+              </tr>
+            </thead>
+            <tbody id="tablaBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const ejemplo = {
+      colors: ["rgba(64, 64, 192, 1)"],
+      data_array: [{
+        label: "Energia Activa Entrante kWh",
+        data: [
+          [1772161200000, 0.3],
+          [1772162100000, 0.32],
+          [1772163000000, 0.34],
+          [1772163900000, 0.33],
+          [1772164800000, 0.31],
+          [1772165700000, 0.31],
+          [1772166600000, 0.31],
+          [1772167500000, 0.31],
+          [1772168400000, 0.43],
+          [1772169300000, 0.31],
+          [1772197200000, 1.15],
+          [1772198100000, 1.5],
+          [1772199000000, 1.52],
+          [1772207100000, 2.69],
+          [1772208000000, 2.67],
+          [1772208900000, 2.66]
+        ]
+      }]
+    };
+
+    function formatDate(d) {
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    }
+
+    function formatTime(d) {
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mi = String(d.getMinutes()).padStart(2, '0');
+      return `${hh}:${mi}`;
+    }
+
+    function formatDateTime(d) {
+      return `${formatDate(d)} ${formatTime(d)}`;
+    }
+
+    function getFranja(hour) {
+      if (hour >= 18 && hour < 23) return 'Punta';
+      if (hour >= 7 && hour < 18) return 'Llano';
+      return 'Valle';
+    }
+
+    function parseInputJson(text) {
+      const json = JSON.parse(text);
+      const serie = json?.data_array?.[0]?.data;
+      if (!Array.isArray(serie)) {
+        throw new Error('No encontré data_array[0].data');
+      }
+      return {
+        label: json?.data_array?.[0]?.label || 'Sin etiqueta',
+        serie
+      };
+    }
+
+    function buildRows(serie, modoFecha, fechaBaseText) {
+      const base = fechaBaseText ? new Date(fechaBaseText) : new Date('2026-02-27T00:00');
+      return serie.map((item, index) => {
+        const ts = item[0];
+        const kWh = Number(item[1]) || 0;
+        let fecha;
+
+        if (modoFecha === 'epoch') {
+          fecha = new Date(ts);
+        } else {
+          fecha = new Date(base.getTime() + index * 15 * 60 * 1000);
+        }
+
+        const hour = fecha.getHours();
+        return {
+          index,
+          timestamp: ts,
+          fecha,
+          fechaTxt: formatDate(fecha),
+          horaTxt: formatTime(fecha),
+          kWh,
+          kW: kWh / 0.25,
+          franja: getFranja(hour)
+        };
+      });
+    }
+
+    function render(rows, label) {
+      const total = rows.reduce((acc, r) => acc + r.kWh, 0);
+      const maxKw = rows.reduce((acc, r) => Math.max(acc, r.kW), 0);
+      const valle = rows.filter(r => r.franja === 'Valle').reduce((a, r) => a + r.kWh, 0);
+      const llano = rows.filter(r => r.franja === 'Llano').reduce((a, r) => a + r.kWh, 0);
+      const punta = rows.filter(r => r.franja === 'Punta').reduce((a, r) => a + r.kWh, 0);
+
+      $('kpiRegistros').textContent = rows.length;
+      $('kpiTotal').textContent = total.toFixed(2);
+      $('kpiMaxKw').textContent = maxKw.toFixed(2);
+      $('kpiValle').textContent = valle.toFixed(2);
+      $('kpiLlano').textContent = llano.toFixed(2);
+      $('kpiPunta').textContent = punta.toFixed(2);
+      $('kpiLabel').textContent = label;
+
+      if (rows.length) {
+        $('kpiPeriodo').innerHTML = `${formatDateTime(rows[0].fecha)}<br>${formatDateTime(rows[rows.length - 1].fecha)}`;
+      } else {
+        $('kpiPeriodo').textContent = '-';
+      }
+
+      $('tablaBody').innerHTML = rows.slice(0, 200).map(r => `
+        <tr>
+          <td>${r.index}</td>
+          <td>${r.timestamp}</td>
+          <td>${r.fechaTxt}</td>
+          <td>${r.horaTxt}</td>
+          <td>${r.kWh.toFixed(2)}</td>
+          <td>${r.kW.toFixed(2)}</td>
+          <td>${r.franja}</td>
+        </tr>
+      `).join('');
+
+      window.__ultimoResumen = {
+        label,
+        registros: rows.length,
+        total_kwh: Number(total.toFixed(2)),
+        potencia_max_kw: Number(maxKw.toFixed(2)),
+        valle_kwh: Number(valle.toFixed(2)),
+        llano_kwh: Number(llano.toFixed(2)),
+        punta_kwh: Number(punta.toFixed(2)),
+        desde: rows.length ? formatDateTime(rows[0].fecha) : null,
+        hasta: rows.length ? formatDateTime(rows[rows.length - 1].fecha) : null,
+        primeros_registros: rows.slice(0, 20).map(r => ({
+          index: r.index,
+          timestamp: r.timestamp,
+          fecha: r.fechaTxt,
+          hora: r.horaTxt,
+          kWh: Number(r.kWh.toFixed(2)),
+          kW: Number(r.kW.toFixed(2)),
+          franja: r.franja
+        }))
+      };
+    }
+
+    function procesar() {
+      try {
+        const { label, serie } = parseInputJson($('jsonInput').value.trim());
+        const rows = buildRows(serie, $('modoFecha').value, $('fechaBase').value);
+        render(rows, label);
+        $('status').className = 'status ok';
+        $('status').textContent = `OK: ${rows.length} registros procesados.`;
+      } catch (err) {
+        $('status').className = 'status error';
+        $('status').textContent = `Error: ${err.message}`;
+      }
+    }
+
+    $('procesarBtn').addEventListener('click', procesar);
+    $('cargarEjemploBtn').addEventListener('click', () => {
+      $('jsonInput').value = JSON.stringify(ejemplo, null, 2);
+      $('status').className = 'status';
+      $('status').textContent = 'Ejemplo cargado. Ahora tocá “Procesar JSON”.';
+    });
+
+    $('copiarResumenBtn').addEventListener('click', async () => {
+      if (!window.__ultimoResumen) {
+        $('status').className = 'status error';
+        $('status').textContent = 'Primero procesá un JSON para poder copiar el resumen.';
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(window.__ultimoResumen, null, 2));
+        $('status').className = 'status ok';
+        $('status').textContent = 'Resumen copiado al portapapeles.';
+      } catch {
+        $('status').className = 'status error';
+        $('status').textContent = 'No pude copiar al portapapeles en este navegador.';
+      }
+    });
+
+    $('jsonInput').value = JSON.stringify(ejemplo, null, 2);
+  </script>
+</body>
+</html>
