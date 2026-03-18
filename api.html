@@ -179,7 +179,6 @@
 
         <div class="actions">
           <button id="procesarBtn">Procesar JSON</button>
-          <button id="ejemploBtn" class="secondary">Cargar ejemplo</button>
           <button id="copiarBtn" class="ghost">Copiar resumen JSON</button>
         </div>
 
@@ -201,9 +200,9 @@
           <div class="kpi"><div class="label">Total kWh</div><div class="value" id="kpiTotal">-</div></div>
           <div class="kpi"><div class="label">Potencia máxima demandada</div><div class="value" id="kpiMaxKw">-</div></div>
           <div class="kpi"><div class="label">Hora del pico</div><div class="value" id="kpiMaxHora" style="font-size:15px; font-weight:700;">-</div></div>
-          <div class="kpi"><div class="label">Punta kWh</div><div class="value" id="kpiPunta">-</div></div>
-          <div class="kpi"><div class="label">Llano kWh</div><div class="value" id="kpiLlano">-</div></div>
-          <div class="kpi"><div class="label">Valle kWh</div><div class="value" id="kpiValle">-</div></div>
+          <div class="kpi"><div class="label">Punta kWh</div><div class="value" id="kpiPunta">-</div><div class="mini" id="kpiPuntaPct">-</div></div>
+          <div class="kpi"><div class="label">Llano kWh</div><div class="value" id="kpiLlano">-</div><div class="mini" id="kpiLlanoPct">-</div></div>
+          <div class="kpi"><div class="label">Valle kWh</div><div class="value" id="kpiValle">-</div><div class="mini" id="kpiVallePct">-</div></div>
           <div class="kpi"><div class="label">Período detectado</div><div class="value" id="kpiPeriodo" style="font-size:15px; font-weight:700;">-</div></div>
         </div>
 
@@ -233,19 +232,7 @@
     const $ = (id) => document.getElementById(id);
     const UY_OFFSET_MS = 3 * 60 * 60 * 1000;
 
-    const ejemplo = {
-      colors: ["rgba(64, 64, 192, 1)", "rgba(192, 64, 64, 1)"],
-      data_array: [{
-        label: "Energia Activa Entrante kWh",
-        data: [
-          [1772161200000,0.3],[1772162100000,0.32],[1772163000000,0.34],[1772163900000,0.33],
-          [1772197200000,1.15],[1772198100000,1.5],[1772199000000,1.52],[1772207100000,2.69],
-          [1772208000000,2.67],[1772208900000,2.66],[1772286300000,2.04],[1772287200000,1.7]
-        ]
-      }],
-      ticks: [1772161200000,1772162100000,1772163000000]
-    };
-
+    
     function pad(n) {
       return String(n).padStart(2, '0');
     }
@@ -328,6 +315,9 @@
       const punta = rows.filter(r => r.franja === 'Punta').reduce((a, r) => a + r.kWh, 0);
       const llano = rows.filter(r => r.franja === 'Llano').reduce((a, r) => a + r.kWh, 0);
       const valle = rows.filter(r => r.franja === 'Valle').reduce((a, r) => a + r.kWh, 0);
+      const punta_pct = total ? (punta / total) * 100 : 0;
+      const llano_pct = total ? (llano / total) * 100 : 0;
+      const valle_pct = total ? (valle / total) * 100 : 0;
       const maxRow = rows.reduce((max, r) => !max || r.kW > max.kW ? r : max, null);
 
       return {
@@ -340,6 +330,9 @@
           valle_kwh: valle,
           max_kw: maxRow ? maxRow.kW : 0,
           max_kw_fecha_hora: maxRow ? formatDateTime(maxRow.fechaUy) : null,
+          punta_pct,
+          llano_pct,
+          valle_pct,
           desde: rows.length ? formatDateTime(rows[0].fechaUy) : null,
           hasta: rows.length ? formatDateTime(rows[rows.length - 1].fechaUy) : null
         }
@@ -355,6 +348,9 @@
       $('kpiPunta').textContent = summary.punta_kwh.toFixed(2);
       $('kpiLlano').textContent = summary.llano_kwh.toFixed(2);
       $('kpiValle').textContent = summary.valle_kwh.toFixed(2);
+      $('kpiPuntaPct').textContent = `${summary.punta_pct.toFixed(2)}% del total`;
+      $('kpiLlanoPct').textContent = `${summary.llano_pct.toFixed(2)}% del total`;
+      $('kpiVallePct').textContent = `${summary.valle_pct.toFixed(2)}% del total`;
       $('kpiPeriodo').innerHTML = summary.desde && summary.hasta ? `${summary.desde}<br>${summary.hasta}` : '-';
 
       $('tablaBody').innerHTML = rows.slice(0, 250).map(r => `
@@ -373,8 +369,11 @@
         registros: summary.registros,
         total_kwh: Number(summary.total_kwh.toFixed(4)),
         punta_kwh: Number(summary.punta_kwh.toFixed(4)),
+        punta_pct: Number(summary.punta_pct.toFixed(4)),
         llano_kwh: Number(summary.llano_kwh.toFixed(4)),
+        llano_pct: Number(summary.llano_pct.toFixed(4)),
         valle_kwh: Number(summary.valle_kwh.toFixed(4)),
+        valle_pct: Number(summary.valle_pct.toFixed(4)),
         potencia_maxima_demandada_kw: Number(summary.max_kw.toFixed(4)),
         fecha_hora_pico_uy: summary.max_kw_fecha_hora,
         desde_uy: summary.desde,
@@ -416,13 +415,7 @@
 
     $('procesarBtn').addEventListener('click', procesar);
 
-    $('ejemploBtn').addEventListener('click', () => {
-      $('jsonInput').value = JSON.stringify(ejemplo, null, 2);
-      $('status').className = 'status';
-      $('status').textContent = 'Ejemplo cargado. Tocá “Procesar JSON”.';
-    });
-
-    $('copiarBtn').addEventListener('click', async () => {
+        $('copiarBtn').addEventListener('click', async () => {
       if (!window.__ultimoResumen) {
         $('status').className = 'status error';
         $('status').textContent = 'Primero procesá un JSON.';
@@ -438,7 +431,7 @@
       }
     });
 
-    $('jsonInput').value = JSON.stringify(ejemplo, null, 2);
+    $('jsonInput').value = '';
   </script>
 </body>
 </html>
